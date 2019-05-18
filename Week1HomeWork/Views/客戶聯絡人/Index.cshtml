@@ -1,5 +1,30 @@
 ﻿@model IEnumerable<Week1HomeWork.Models.客戶聯絡人>
+@section headers{
+    <link href="@Url.Content("~/Content/footable.bootstrap.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/footable.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script>
+        var ft;
+        $(function () {
+            ft = FooTable.init('#mytable', ft_option);
+            //$('#mytable').footable();
+        });
 
+        function exportXLS(){
+            window.open('@Url.Action("Download", "客戶聯絡人")?title=@ViewBag.title&keywrod=@ViewBag.keyword', '', '');
+        }
+
+
+        function gosearch() {
+
+
+
+
+        }
+
+    </script>
+}
 @{
     ViewBag.Title = "Index";
 }
@@ -11,58 +36,65 @@
 
     @using (Html.BeginForm("index", "客戶聯絡人", FormMethod.Get))
     {
-        <input type="search" placeholder="請輸入關鍵字" name="keyword" />
+        <span>職稱：</span><input type="text" name="title" placeholder="職稱" /><br />
+        <span>關鍵字：</span><input type="search" placeholder="請輸入關鍵字" name="keyword" />
+        <input type="submit" value="送出" class="btn btn-primary" />
+        <input type="button" value="ajax查詢" class="btn btn-default" onclick="gosearch();" />
     }
+    <div style="text-align:right;"><button class="btn btn-default" onclick="exportXLS();">Download</button></div>
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.職稱)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.姓名)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.手機)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.電話)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.職稱)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.姓名)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.手機)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.電話)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
-
+<table class="table" id="mytable" data-sorting="true">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.職稱)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.姓名)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.手機)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.電話)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.職稱)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.姓名)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.手機)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.電話)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

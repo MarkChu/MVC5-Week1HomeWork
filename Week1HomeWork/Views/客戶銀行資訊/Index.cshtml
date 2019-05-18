@@ -3,7 +3,11 @@
 @{
     ViewBag.Title = "Index";
 }
-
+<script>
+    function exportXLS(){
+        window.open('@Url.Action("Download", "客戶銀行資訊")?keyword=@ViewBag.keyword', '', '');
+    }
+</script>
 <h2>Index</h2>
 
 <p>
@@ -13,7 +17,7 @@
     {
         <input type="search" placeholder="請輸入關鍵字" name="keyword" />
     }
-
+    <div style="text-align:right;"><button class="btn btn-default" onclick="exportXLS();">Download</button></div>
 </p>
 <table class="table">
     <tr>

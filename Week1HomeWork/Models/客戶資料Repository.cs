@@ -2,17 +2,24 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Collections;
+using System.Web.Mvc;
 
 namespace Week1HomeWork.Models
 {   
 	public  class 客戶資料Repository : EFRepository<客戶資料>, I客戶資料Repository
 	{
 
-        public IQueryable<客戶資料> GetList(string keyword) {
+        public IQueryable<客戶資料> GetList(string keyword , string catego) {
             var data = this.All().Where(p => false == p.是否已刪除).AsQueryable();
             if (!String.IsNullOrEmpty(keyword))
             {
                 data = data.Where(p => p.客戶名稱.Contains(keyword));
+            }
+            if (!String.IsNullOrEmpty(catego))
+            {
+                var c = Int32.Parse(catego);
+                data = data.Where(p => p.客戶分類 == c);
             }
 
             return data;
