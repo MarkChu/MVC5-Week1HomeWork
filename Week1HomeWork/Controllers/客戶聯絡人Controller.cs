@@ -12,16 +12,23 @@ namespace Week1HomeWork.Controllers
 {
     public class 客戶聯絡人Controller : Controller
     {
-        private 客戶資料Entities db = new 客戶資料Entities();
+        //private 客戶資料Entities db = new 客戶資料Entities();
+
+        客戶聯絡人Repository repo;
+        客戶資料Repository repoCust;
+
+        public 客戶聯絡人Controller()
+        {
+            repo = RepositoryHelper.Get客戶聯絡人Repository();
+            repoCust = RepositoryHelper.Get客戶資料Repository(repo.UnitOfWork);
+        }
+
+
 
         // GET: 客戶聯絡人
         public ActionResult Index(string keyword)
         {
-            var data = db.客戶聯絡人.Where(p => false == p.是否已刪除).AsQueryable();
-            if (!String.IsNullOrEmpty(keyword))
-            {
-                data = data.Where(p => p.姓名.Contains(keyword));
-            }
+            var data = repo.GetList(keyword);
 
             return View(data.ToList());
         }
@@ -33,7 +40,7 @@ namespace Week1HomeWork.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = repo.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -44,7 +51,7 @@ namespace Week1HomeWork.Controllers
         // GET: 客戶聯絡人/Create
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList( repoCust.All(), "Id", "客戶名稱");
             return View();
         }
 
@@ -57,12 +64,12 @@ namespace Week1HomeWork.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶聯絡人.Add(客戶聯絡人);
-                db.SaveChanges();
+                repo.Add(客戶聯絡人);
+                repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList( repoCust.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -73,12 +80,12 @@ namespace Week1HomeWork.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = repo.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList( repoCust.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -91,11 +98,11 @@ namespace Week1HomeWork.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(客戶聯絡人).State = EntityState.Modified;
-                db.SaveChanges();
+                repo.UnitOfWork.Context.Entry(客戶聯絡人).State = EntityState.Modified;
+                repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList( repoCust.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -106,7 +113,7 @@ namespace Week1HomeWork.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = repo.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -119,9 +126,9 @@ namespace Week1HomeWork.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
-            db.客戶聯絡人.Remove(客戶聯絡人);
-            db.SaveChanges();
+            客戶聯絡人 客戶聯絡人 = repo.Find(id);
+            repo.Delete(客戶聯絡人);
+            repo.UnitOfWork.Commit();
             return RedirectToAction("Index");
         }
 
@@ -129,7 +136,7 @@ namespace Week1HomeWork.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                repo.UnitOfWork.Context.Dispose();
             }
             base.Dispose(disposing);
         }
