@@ -30,6 +30,7 @@ namespace Week1HomeWork.Models
         [StringLength(20, ErrorMessage="欄位長度不得大於 20 個字元")]
         [Required]
         public string 帳戶號碼 { get; set; }
+
         [Required]
         public bool 是否已刪除 { get; set; }
     

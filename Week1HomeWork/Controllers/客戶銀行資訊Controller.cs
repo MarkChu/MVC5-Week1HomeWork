@@ -15,10 +15,15 @@ namespace Week1HomeWork.Controllers
         private 客戶資料Entities db = new 客戶資料Entities();
 
         // GET: 客戶銀行資訊
-        public ActionResult Index()
+        public ActionResult Index(string keyword)
         {
-            var 客戶銀行資訊 = db.客戶銀行資訊.Include(客 => 客.客戶資料);
-            return View(客戶銀行資訊.ToList());
+            var data = db.客戶銀行資訊.Where(p => false == p.是否已刪除).AsQueryable();
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                data = data.Where(p => p.帳戶名稱.Contains(keyword));
+            }
+
+            return View(data.ToList());
         }
 
         // GET: 客戶銀行資訊/Details/5
